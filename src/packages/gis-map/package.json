@@ -1,0 +1,11 @@
+{
+  "name": "@gis/map",
+  "version": "1.0.0",
+  "description": "Reusable, Business-Agnostic GIS Map SDK for Next.js and OpenLayers",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "private": true,
+  "dependencies": {
+    "ol": "^10.10.0"
+  }
+}

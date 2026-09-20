@@ -1,0 +1,19 @@
+{
+  "name": "@gis/realtime-spatial",
+  "version": "1.0.0",
+  "description": "Reusable business-agnostic real-time spatial data & event engine package for multi-tenant GIS applications.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "keywords": [
+    "gis",
+    "realtime",
+    "spatial",
+    "postgis",
+    "events",
+    "geofence",
+    "location-updates"
+  ],
+  "author": "GIS Platform Team",
+  "license": "UNLICENSED",
+  "private": true
+}

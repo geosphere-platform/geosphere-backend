@@ -1,0 +1,1 @@
+{"version":3,"file":"status-badge.js","sourceRoot":"","sources":["../../src/ui/status-badge.ts"],"names":[],"mappings":"AAAA;;GAEG;AAOH,MAAM,UAAU,wBAAwB,CAAC,KAAgC;IACvE,MAAM,IAAI,GAAG,KAAK,CAAC,MAAM,KAAK,IAAI,CAAC;IACnC,MAAM,UAAU,GAAG,IAAI,CAAC,CAAC,CAAC,wBAAwB,CAAC,CAAC,CAAC,iCAAiC,CAAC;IACvF,OAAO,eAAe,UAAU;;wBAEV,KAAK,CAAC,MAAM;mCACD,KAAK,CAAC,YAAY;SAC5C,CAAC;AACV,CAAC"}

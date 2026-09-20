@@ -1,0 +1,11 @@
+{
+  "name": "@gis-sdk/map",
+  "version": "1.0.0",
+  "description": "Reusable Map SDK with Provider Abstraction, Layers, Drawing, Selection, Popups, and Measurement",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@gis-sdk/core": "^1.0.0",
+    "ol": "^10.10.0"
+  }
+}

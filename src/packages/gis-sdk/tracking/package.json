@@ -1,0 +1,10 @@
+{
+  "name": "@gis-sdk/tracking",
+  "version": "1.0.0",
+  "description": "Generic Entity Tracking SDK with validation, batching, and subscriptions",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@gis-sdk/core": "^1.0.0"
+  }
+}

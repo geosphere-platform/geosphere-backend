@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgis/postgis:17-3.5
+    container_name: geosphere_postgres
+
+    environment:
+      POSTGRES_DB: geosphere_db
+      POSTGRES_USER: geosphere_admin
+      POSTGRES_PASSWORD: gis_dev_password
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:

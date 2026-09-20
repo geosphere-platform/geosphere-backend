@@ -1,0 +1,125 @@
+/* GeoSphere Master Web SDK Design System & UI Stylesheet (@geosphere/web-sdk/styles.css) */
+
+:root {
+  --geosphere-primary: #6366f1;
+  --geosphere-secondary: #4f46e5;
+  --geosphere-accent: #38bdf8;
+  --geosphere-bg: #020617;
+  --geosphere-surface: #0f172a;
+  --geosphere-surface-variant: #1e293b;
+  --geosphere-text-primary: #f8fafc;
+  --geosphere-text-secondary: #94a3b8;
+  --geosphere-success: #10b981;
+  --geosphere-warning: #f59e0b;
+  --geosphere-error: #f43f5e;
+  --geosphere-border: #1e293b;
+  --geosphere-radius-medium: 0.75rem;
+  --geosphere-radius-pill: 9999px;
+}
+
+/* Preset 1: Modern */
+[data-geosphere-style="Modern"] {
+  --geosphere-primary: #10b981;
+  --geosphere-secondary: #059669;
+  --geosphere-accent: #34d399;
+}
+
+/* Preset 2: Enterprise */
+[data-geosphere-style="Enterprise"] {
+  --geosphere-primary: #2563eb;
+  --geosphere-secondary: #1d4ed8;
+  --geosphere-accent: #60a5fa;
+}
+
+/* Preset 3: Glass */
+[data-geosphere-style="Glass"] {
+  --geosphere-surface: rgba(15, 23, 42, 0.65);
+  --geosphere-border: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+}
+
+/* Preset 4: High Contrast */
+[data-geosphere-style="High Contrast"] {
+  --geosphere-bg: #000000;
+  --geosphere-surface: #111111;
+  --geosphere-text-primary: #ffffff;
+  --geosphere-primary: #ffff00;
+  --geosphere-border: #ffffff;
+}
+
+.geosphere-ui-root, [data-geosphere-ui] {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--geosphere-text-primary);
+  background-color: var(--geosphere-bg);
+}
+
+/* Badge Controls */
+.geosphere-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.75rem;
+  border-radius: var(--geosphere-radius-pill);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  background-color: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.geosphere-status-badge.degraded {
+  border-color: rgba(245, 158, 11, 0.3);
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.geosphere-status-badge .indicator {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background-color: currentColor;
+  animation: geosphere-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Card Containers */
+.geosphere-card {
+  padding: 1.25rem;
+  border-radius: var(--geosphere-radius-medium);
+  background-color: var(--geosphere-surface);
+  border: 1px solid var(--geosphere-border);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+.geosphere-card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--geosphere-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Map Canvas Container */
+.geosphere-map-container {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  border-radius: var(--geosphere-radius-medium);
+  overflow: hidden;
+  background-color: var(--geosphere-bg);
+  border: 1px solid var(--geosphere-border);
+}
+
+.geosphere-map-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.25;
+  pointer-events: none;
+  background-image: radial-gradient(var(--geosphere-primary) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+@keyframes geosphere-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}

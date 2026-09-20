@@ -1,0 +1,10 @@
+{
+  "name": "@gis-sdk/geofence",
+  "version": "1.0.0",
+  "description": "Reusable Geofencing SDK with Circle, Polygon, MultiPolygon, and Corridor support",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@gis-sdk/core": "^1.0.0"
+  }
+}

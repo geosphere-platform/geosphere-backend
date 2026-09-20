@@ -1,0 +1,1 @@
+{"version":3,"file":"offline-ui.contracts.d.ts","sourceRoot":"","sources":["../../src/contracts/offline-ui.contracts.ts"],"names":[],"mappings":"AAAA;;;GAGG;AAEH,OAAO,EAAE,4BAA4B,EAAE,yBAAyB,EAAE,MAAM,mBAAmB,CAAC;AAE5F,eAAO,MAAM,qBAAqB,EAAE,MAAM,CAAC,MAAM,EAAE,4BAA4B,CAiE9E,CAAC;AAEF,eAAO,MAAM,0BAA0B,EAAE,MAAM,CAAC,MAAM,EAAE,yBAAyB,CAuGhF,CAAC"}

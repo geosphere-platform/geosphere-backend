@@ -1,0 +1,17 @@
+{
+  "name": "@gis-sdk/core",
+  "version": "1.0.0",
+  "description": "Core GIS SDK with configuration, API client, authentication, tenant context, errors, and GeoJSON utilities",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "gis",
+    "sdk",
+    "core"
+  ],
+  "author": "GIS Platform Team",
+  "license": "MIT"
+}

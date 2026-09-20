@@ -1,0 +1,1 @@
+{"version":3,"file":"rules-ui.contracts.d.ts","sourceRoot":"","sources":["../../src/contracts/rules-ui.contracts.ts"],"names":[],"mappings":"AAAA;;;GAGG;AAEH,OAAO,EAAE,4BAA4B,EAAE,yBAAyB,EAAE,MAAM,mBAAmB,CAAC;AAE5F,eAAO,MAAM,mBAAmB,EAAE,MAAM,CAAC,MAAM,EAAE,4BAA4B,CA2C5E,CAAC;AAEF,eAAO,MAAM,wBAAwB,EAAE,MAAM,CAAC,MAAM,EAAE,yBAAyB,CAmC9E,CAAC"}

@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../src/tracking/index.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,oBAAoB,EAA2B,MAAM,oCAAoC,CAAC;AAEnG,MAAM,OAAO,cAAc;IACL;IAApB,YAAoB,IAAgB;QAAhB,SAAI,GAAJ,IAAI,CAAY;IAAG,CAAC;IAEjC,iBAAiB,CAAC,MAAgC;QACvD,OAAO,IAAI,oBAAoB,CAAC,MAAM,CAAC,CAAC;IAC1C,CAAC;CACF;AAED,cAAc,oCAAoC,CAAC;AACnD,cAAc,uCAAuC,CAAC"}

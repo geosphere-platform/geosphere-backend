@@ -1,0 +1,10 @@
+{
+  "name": "@gis-sdk/realtime",
+  "version": "1.0.0",
+  "description": "Realtime Engine SDK with Connection State Machine and Event Normalization",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "dependencies": {
+    "@gis-sdk/core": "^1.0.0"
+  }
+}

@@ -1,0 +1,52 @@
+﻿{
+  "name": "geosphere-backend",
+  "version": "1.0.0",
+  "description": "GeoSphere Enterprise GIS & Telemetry Backend API & Database Service",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 3000",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0 -p 3000",
+    "typecheck": "tsc --noEmit",
+    "db:generate": "drizzle-kit generate:pg",
+    "db:migrate": "node --env-file=.env --import tsx src/database/migrate.ts",
+    "db:seed": "node --env-file=.env --import tsx src/database/seed.ts",
+    "db:setup": "npm run db:migrate && npm run db:seed",
+    "db:push": "drizzle-kit push",
+    "simulate:gps": "node --import tsx scripts/gps-simulator.ts",
+    "test": "node --max-old-space-size=4096 --import tsx src/__tests__/run-all-tests.ts"
+  },
+  "dependencies": {
+    "@saurabhnagare-sys/geosphere-web-sdk": "file:./packages/web-sdk",
+    "bcryptjs": "^2.4.3",
+    "drizzle-orm": "^0.45.2",
+    "jose": "^6.2.8",
+    "jsonwebtoken": "^9.0.2",
+    "next": "16.3.0",
+    "nodemailer": "^9.0.5",
+    "pg": "^8.11.3",
+    "pino": "^9.0.0",
+    "pino-pretty": "^11.0.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.5",
+    "@types/node": "^20",
+    "@types/nodemailer": "^6.4.14",
+    "@types/pg": "^8.11.2",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "drizzle-kit": "^0.20.14",
+    "tsx": "^4.23.11",
+    "typescript": "^5"
+  },
+  "overrides": {
+    "drizzle-orm": "$drizzle-orm",
+    "nanoid": "^3.3.18",
+    "esbuild": "^0.25.0",
+    "nodemailer": "$nodemailer"
+  }
+}

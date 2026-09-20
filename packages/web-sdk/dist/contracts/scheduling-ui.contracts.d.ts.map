@@ -1,0 +1,1 @@
+{"version":3,"file":"scheduling-ui.contracts.d.ts","sourceRoot":"","sources":["../../src/contracts/scheduling-ui.contracts.ts"],"names":[],"mappings":"AAAA;;;GAGG;AAEH,OAAO,EAAE,4BAA4B,EAAE,yBAAyB,EAAE,MAAM,mBAAmB,CAAC;AAE5F,eAAO,MAAM,wBAAwB,EAAE,MAAM,CAAC,MAAM,EAAE,4BAA4B,CA2CjF,CAAC;AAEF,eAAO,MAAM,6BAA6B,EAAE,MAAM,CAAC,MAAM,EAAE,yBAAyB,CAmCnF,CAAC"}

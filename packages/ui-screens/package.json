@@ -1,0 +1,39 @@
+{
+  "name": "@geosphere/ui-screens",
+  "version": "1.0.0",
+  "description": "GeoSphere Production-Ready Reusable UI Screen Library",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc --build tsconfig.json",
+    "clean": "tsc --build --clean",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "geosphere",
+    "ui-screens",
+    "gis",
+    "telemetry",
+    "dashboard",
+    "react"
+  ],
+  "author": "GeoSphere Platform Team",
+  "license": "MIT",
+  "dependencies": {
+    "ol": "^10.4.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.3.3"
+  }
+}

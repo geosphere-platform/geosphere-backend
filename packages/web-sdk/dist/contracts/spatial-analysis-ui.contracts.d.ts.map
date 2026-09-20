@@ -1,0 +1,1 @@
+{"version":3,"file":"spatial-analysis-ui.contracts.d.ts","sourceRoot":"","sources":["../../src/contracts/spatial-analysis-ui.contracts.ts"],"names":[],"mappings":"AAAA;;;GAGG;AAEH,OAAO,EAAE,4BAA4B,EAAE,yBAAyB,EAAE,MAAM,mBAAmB,CAAC;AAE5F,eAAO,MAAM,8BAA8B,EAAE,MAAM,CAAC,MAAM,EAAE,4BAA4B,CAgEvF,CAAC;AAEF,eAAO,MAAM,mCAAmC,EAAE,MAAM,CAAC,MAAM,EAAE,yBAAyB,CAyIzF,CAAC"}

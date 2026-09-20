@@ -1,0 +1,64 @@
+﻿{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@saurabhnagare-sys/geosphere-web-sdk": ["./packages/web-sdk/dist/index.d.ts"],
+      "@geosphere/ui-screens": ["./packages/ui-screens/src/index.ts"],
+      "@geosphere/gis-web": ["./packages/gis-web/src/index.ts"],
+      "@geosphere/ui": ["./packages/ui/src/index.ts"],
+      "@gis/map": ["./src/packages/gis-map/src/index.ts"],
+      "@gis/map/*": ["./src/packages/gis-map/src/*"],
+      "@gis-sdk/*": ["./src/packages/gis-sdk/*/src/index.ts"],
+      "@gis-sdk/core": ["./src/packages/gis-sdk/core/src/index.ts"],
+      "@gis-sdk/entitlements": ["./src/packages/gis-sdk/entitlements/src/index.ts"],
+      "@gis-sdk/map": ["./src/packages/gis-sdk/map/src/index.ts"],
+      "@gis-sdk/spatial": ["./src/packages/gis-sdk/spatial/src/index.ts"],
+      "@gis-sdk/geofence": ["./src/packages/gis-sdk/geofence/src/index.ts"],
+      "@gis-sdk/tracking": ["./src/packages/gis-sdk/tracking/src/index.ts"],
+      "@gis-sdk/realtime": ["./src/packages/gis-sdk/realtime/src/index.ts"],
+      "@gis-sdk/rules": ["./src/packages/gis-sdk/rules/src/index.ts"],
+      "@gis-sdk/analytics": ["./src/packages/gis-sdk/analytics/src/index.ts"],
+      "@gis-sdk/offline": ["./src/packages/gis-sdk/offline/src/index.ts"],
+      "@gis-sdk/react": ["./src/packages/gis-sdk/react/src/index.ts"],
+      "@gis-sdk/plugins": ["./src/packages/gis-sdk/plugins/src/index.ts"],
+      "@your-platform/core": ["./src/packages/gis-sdk/core/src/index.ts"],
+      "@your-platform/map": ["./src/packages/gis-sdk/map/src/index.ts"],
+      "@your-platform/spatial": ["./src/packages/gis-sdk/spatial/src/index.ts"],
+      "@your-platform/geofence": ["./src/packages/gis-sdk/geofence/src/index.ts"],
+      "@your-platform/tracking": ["./src/packages/gis-sdk/tracking/src/index.ts"],
+      "@your-platform/realtime": ["./src/packages/gis-sdk/realtime/src/index.ts"],
+      "@your-platform/analytics": ["./src/packages/gis-sdk/analytics/src/index.ts"],
+      "@your-platform/rules": ["./src/packages/gis-sdk/rules/src/index.ts"],
+      "@your-platform/auth": ["./src/packages/gis-sdk/core/src/index.ts"],
+      "@your-platform/entitlements": ["./src/packages/gis-sdk/entitlements/src/index.ts"],
+      "@your-platform/react": ["./src/packages/gis-sdk/react/src/index.ts"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": ["node_modules", "src/packages/**/*.test.ts"]
+}

@@ -1,0 +1,1 @@
+{"version":3,"file":"gis-ui.contracts.d.ts","sourceRoot":"","sources":["../../src/contracts/gis-ui.contracts.ts"],"names":[],"mappings":"AAAA;;;GAGG;AAEH,OAAO,EAAE,4BAA4B,EAAE,yBAAyB,EAAE,MAAM,mBAAmB,CAAC;AAE5F,eAAO,MAAM,iBAAiB,EAAE,MAAM,CAAC,MAAM,EAAE,4BAA4B,CAiE1E,CAAC;AAEF,eAAO,MAAM,sBAAsB,EAAE,MAAM,CAAC,MAAM,EAAE,yBAAyB,CAqE5E,CAAC"}

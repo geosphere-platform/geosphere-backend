@@ -1,0 +1,62 @@
+{
+  "name": "@saurabhnagare-sys/geosphere-web-sdk",
+  "version": "1.0.0",
+  "description": "GeoSphere Multi-Tenant Enterprise GIS Platform Web SDK",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./ui": {
+      "types": "./dist/ui/index.d.ts",
+      "import": "./dist/ui/index.js",
+      "require": "./dist/ui/index.js"
+    },
+    "./styles.css": "./dist/ui/styles.css",
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.js",
+      "require": "./dist/*.js"
+    }
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saurabhnagare-sys/GIS-Vehicle-Tracking.git"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc --build tsconfig.json && node -e \"require('fs').mkdirSync('./dist/ui', {recursive: true}); require('fs').copyFileSync('./src/ui/styles.css', './dist/ui/styles.css')\"",
+    "clean": "tsc --build --clean",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "node dist/__tests__/sdk.test.js"
+  },
+  "keywords": [
+    "gis",
+    "geosphere",
+    "sdk",
+    "maps",
+    "spatial",
+    "multi-tenant",
+    "geofence",
+    "telemetry"
+  ],
+  "author": "GeoSphere Platform Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}

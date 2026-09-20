@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../../src/navigation/index.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,sBAAsB,EAA6B,MAAM,sCAAsC,CAAC;AAEzG,MAAM,OAAO,gBAAgB;IACP;IAApB,YAAoB,IAAgB;QAAhB,SAAI,GAAJ,IAAI,CAAY;IAAG,CAAC;IAEjC,mBAAmB,CAAC,MAAkC;QAC3D,OAAO,IAAI,sBAAsB,CAAC,MAAM,CAAC,CAAC;IAC5C,CAAC;CACF;AAED,cAAc,sCAAsC,CAAC;AACrD,cAAc,yCAAyC,CAAC"}
