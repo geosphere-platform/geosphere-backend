@@ -1,10 +1,9 @@
 import React from "react";
-import { DashboardLayout } from "@/features/dashboard/components/DashboardLayout";
 
 export default function DashboardRouteLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <DashboardLayout>{children}</DashboardLayout>;
+  return <div className="min-h-screen bg-slate-950 text-slate-100">{children}</div>;
 }

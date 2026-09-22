@@ -37,17 +37,15 @@ export async function POST(req: NextRequest) {
         userId = decoded.sub;
         role = decoded.role;
       } catch {
-        // Fall back to API Key or device token if JWT expired or invalid
+        return ApiResponse.error("Invalid or expired authorization token", 401, "UNAUTHORIZED");
       }
     } else if (apiKey) {
       // Validated device token or API Key
       tenantId = req.headers.get("x-tenant-id") || req.nextUrl.searchParams.get("tenantId") || "default-tenant-0000";
       userId = `device-${apiKey.slice(0, 8)}`;
-    } else if (process.env.NODE_ENV !== "production") {
-      // Allow dev / simulator environment default tenant
-      tenantId = req.headers.get("x-tenant-id") || req.nextUrl.searchParams.get("tenantId") || "default-tenant-0000";
+      role = USER_ROLES.TENANT_ADMIN;
     } else {
-      return ApiResponse.error("Missing authorization: Bearer token or x-api-key required", 401);
+      return ApiResponse.error("Missing authorization: Bearer token or x-api-key required", 401, "UNAUTHORIZED");
     }
 
     // 2. Extract Raw Payload (Supports JSON or raw text hex string)
@@ -98,26 +96,19 @@ export async function POST(req: NextRequest) {
       parsedUpdates
     );
 
-    // 5. Ingest into Core Real-Time Engine (PostGIS + Event Publisher)
-    const results = [];
-    for (const update of accepted) {
-      try {
-        const res = await realtimeEngine.ingestLocation(
-          { tenantId, userId, role },
-          update
-        );
-        results.push(res);
-      } catch {
-        // Continue batch execution
-      }
-    }
+    // 5. Ingest into Core Real-Time Engine (PostGIS Batch + Event Publisher)
+    const ingestResult = await realtimeEngine.ingestBatch(
+      { tenantId, userId, role },
+      accepted
+    );
 
     return ApiResponse.success({
       success: true,
-      processedCount: results.length,
+      processedCount: ingestResult.processed,
+      acceptedCount: ingestResult.accepted,
       duplicateCount: duplicates,
       staleCount: stale,
-      records: results,
+      records: ingestResult.results,
     }, 200);
   } catch (err) {
     return ApiResponse.handle(err);

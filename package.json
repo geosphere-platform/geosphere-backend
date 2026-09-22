@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "geosphere-backend",
   "version": "1.0.0",
   "description": "GeoSphere Enterprise GIS & Telemetry Backend API & Database Service",
@@ -18,17 +18,21 @@
   },
   "dependencies": {
     "@saurabhnagare-sys/geosphere-web-sdk": "file:./packages/web-sdk",
+    "@tailwindcss/postcss": "^4.3.3",
     "bcryptjs": "^2.4.3",
     "drizzle-orm": "^0.45.2",
     "jose": "^6.2.8",
     "jsonwebtoken": "^9.0.2",
     "next": "16.3.0",
     "nodemailer": "^9.0.5",
+    "ol": "^10.4.0",
     "pg": "^8.11.3",
     "pino": "^9.0.0",
     "pino-pretty": "^11.0.0",
+    "postcss": "^8.5.28",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "tailwindcss": "^4.3.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {

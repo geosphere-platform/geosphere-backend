@@ -22,6 +22,9 @@ interface BucketState {
 export class RateLimiter {
   private static instance: RateLimiter;
   private memoryBuckets = new Map<string, BucketState>();
+  private lastPruneAt = Date.now();
+  private static readonly MAX_BUCKETS = 10000;
+  private static readonly PRUNE_INTERVAL_MS = 60000; // 1 minute
 
   private constructor() {}
 
@@ -33,12 +36,47 @@ export class RateLimiter {
   }
 
   /**
+   * Periodically remove stale idle buckets to prevent memory leaks and OOM crashes
+   */
+  private pruneStale(now: number, windowMs: number): void {
+    if (
+      now - this.lastPruneAt < RateLimiter.PRUNE_INTERVAL_MS &&
+      this.memoryBuckets.size < RateLimiter.MAX_BUCKETS
+    ) {
+      return;
+    }
+
+    this.lastPruneAt = now;
+
+    // Prune buckets that have been idle longer than their window
+    for (const [key, state] of this.memoryBuckets.entries()) {
+      if (now - state.lastRefillAt > windowMs) {
+        this.memoryBuckets.delete(key);
+      }
+    }
+
+    // If still over capacity under extreme IP churn, evict oldest entries
+    if (this.memoryBuckets.size >= RateLimiter.MAX_BUCKETS) {
+      const keysToDrop = this.memoryBuckets.size - Math.floor(RateLimiter.MAX_BUCKETS * 0.8);
+      let dropped = 0;
+      for (const key of this.memoryBuckets.keys()) {
+        this.memoryBuckets.delete(key);
+        dropped++;
+        if (dropped >= keysToDrop) break;
+      }
+    }
+  }
+
+  /**
    * Consume 1 token from key rate bucket using sliding-window refill
    */
   public consume(options: RateLimitOptions): RateLimitResult {
     const limit = options.maxRequests ?? env.RATE_LIMIT_REQUESTS_PER_MIN ?? 120;
     const windowMs = options.windowMs ?? env.RATE_LIMIT_WINDOW_MS ?? 60000;
     const now = Date.now();
+
+    // Trigger maintenance sweep to bound memory footprint
+    this.pruneStale(now, windowMs);
 
     let state = this.memoryBuckets.get(options.key);
     if (!state) {

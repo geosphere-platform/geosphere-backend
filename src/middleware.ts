@@ -3,6 +3,7 @@ import { verifyAccessToken } from "./core/auth/jwt";
 import { extractBearerToken } from "./core/auth/session";
 import { rateLimiter } from "./core/rate-limit/rate-limiter";
 import { env } from "./core/config/env";
+import { serverState } from "./core/server/server-state";
 // Note: Web Crypto API (globalThis.crypto) is used instead of Node.js crypto
 // because Next.js middleware runs in the Edge Runtime.
 
@@ -14,6 +15,7 @@ const PUBLIC_PATHS = [
   "/api/v1/auth/forgot-password",
   "/api/v1/auth/reset-password",
   "/api/v1/auth/verify-email",
+  "/api/v1/admin/server-control",
   "/api/v1/telemetry/gps",
   "/api/v1/openapi",
   "/openapi.json",
@@ -63,6 +65,32 @@ export async function middleware(request: NextRequest) {
     applyCorsHeaders(res, request);
     applySecurityHeaders(res, correlationId, rlResult);
     return res;
+  }
+
+  // Server State Gate: When server is STOPPED/OFFLINE, pause all public and telemetry APIs
+  if (!serverState.isOnline()) {
+    const isControlOrAuth =
+      pathname.startsWith("/api/v1/auth") ||
+      pathname.startsWith("/api/v1/admin/server-control") ||
+      pathname.startsWith("/api/health") ||
+      !pathname.startsWith("/api/");
+
+    if (!isControlOrAuth) {
+      const res = NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: "SERVER_OFFLINE",
+            message:
+              "The GeoSphere API server is currently STOPPED/OFFLINE by an administrator for maintenance.",
+          },
+        },
+        { status: 503 },
+      );
+      applyCorsHeaders(res, request);
+      applySecurityHeaders(res, correlationId, rlResult);
+      return res;
+    }
   }
 
   // Only protect API routes under /api/v1/
