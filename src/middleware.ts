@@ -194,18 +194,24 @@ function applySecurityHeaders(
 
 function applyCorsHeaders(res: NextResponse, request: NextRequest) {
   const origin = request.headers.get("origin");
-  const allowedOrigins = (env.CORS_ALLOWED_ORIGINS ?? "*").split(",");
+  const rawAllowed = env.CORS_ALLOWED_ORIGINS ?? "*";
+  const allowedOrigins = rawAllowed.split(",").map((o) => o.trim());
 
-  if (
-    origin &&
-    (allowedOrigins.includes("*") || allowedOrigins.includes(origin))
-  ) {
+  if (allowedOrigins.includes("*")) {
+    if (origin && env.NODE_ENV !== "production") {
+      res.headers.set("Access-Control-Allow-Origin", origin);
+      res.headers.set("Access-Control-Allow-Credentials", "true");
+    } else {
+      res.headers.set("Access-Control-Allow-Origin", "*");
+      // Wildcard '*' cannot be combined with Access-Control-Allow-Credentials: true
+    }
+  } else if (origin && allowedOrigins.includes(origin)) {
     res.headers.set("Access-Control-Allow-Origin", origin);
-  } else {
-    res.headers.set("Access-Control-Allow-Origin", allowedOrigins[0] || "*");
+    res.headers.set("Access-Control-Allow-Credentials", "true");
+  } else if (!origin && allowedOrigins.length > 0 && !allowedOrigins.includes("*")) {
+    res.headers.set("Access-Control-Allow-Origin", allowedOrigins[0]);
   }
 
-  res.headers.set("Access-Control-Allow-Credentials", "true");
   res.headers.set(
     "Access-Control-Allow-Methods",
     "GET, POST, PUT, DELETE, PATCH, OPTIONS",

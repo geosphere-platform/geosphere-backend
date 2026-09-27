@@ -1,5 +1,5 @@
-import { hashPassword, generateSecureToken } from "@/core/auth/password";
-import { AUTH_CONSTANTS } from "@/core/constants";
+import { hashPassword, generateSecureToken, hashToken } from "@/core/auth/password";
+import { AUTH_CONSTANTS, USER_ROLES } from "@/core/constants";
 import { ConflictError } from "@/core/errors/errors";
 import {
   IUserRepository,
@@ -37,7 +37,7 @@ export class RegisterUseCase {
       passwordHash,
       firstName: dto.firstName,
       lastName: dto.lastName,
-      role: dto.role,
+      role: USER_ROLES.VIEWER, // Strict default: prevent privilege escalation via self-registration
       organizationId: dto.organizationId ?? null,
       emailVerifiedAt: null,
       isActive: true,
@@ -47,7 +47,7 @@ export class RegisterUseCase {
 
     // Generate email verification token
     const verificationToken = generateSecureToken();
-    const tokenHash = await hashPassword(verificationToken);
+    const tokenHash = hashToken(verificationToken);
     const expiresAt = new Date(
       Date.now() + AUTH_CONSTANTS.EMAIL_VERIFY_TOKEN_EXPIRES_MS,
     );

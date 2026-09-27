@@ -38,13 +38,13 @@ const getAccessSecret = () => {
 };
 
 const getRefreshSecret = () => {
-  const secret = env.JWT_SECRET;
+  const secret = env.JWT_REFRESH_SECRET || `${env.JWT_SECRET}_refresh`;
   if (!secret || secret.trim().length < 16) {
     throw new Error(
-      "CRITICAL SECURITY ERROR: JWT_SECRET environment variable is missing or insecure (min 16 characters required).",
+      "CRITICAL SECURITY ERROR: JWT refresh secret is missing or insecure (min 16 characters required).",
     );
   }
-  return new TextEncoder().encode(`${secret}_refresh`);
+  return new TextEncoder().encode(secret);
 };
 
 // ─── Sign ─────────────────────────────────────────────────────────────────────
@@ -54,6 +54,7 @@ export async function signAccessToken(
 ): Promise<string> {
   return await new SignJWT({ ...payload, type: "access" })
     .setProtectedHeader({ alg: "HS256" })
+    .setJti(crypto.randomUUID())
     .setIssuedAt()
     .setExpirationTime("15m")
     .setIssuer("geosphere-platform")
@@ -66,6 +67,7 @@ export async function signRefreshToken(
 ): Promise<string> {
   return await new SignJWT({ ...payload, type: "refresh" })
     .setProtectedHeader({ alg: "HS256" })
+    .setJti(crypto.randomUUID())
     .setIssuedAt()
     .setExpirationTime("7d")
     .setIssuer("geosphere-platform")

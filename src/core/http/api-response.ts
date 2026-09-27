@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { AppError } from "../errors/errors";
 import { logger } from "../logger/logger";
+import { metricsCollector } from "@/app/api/metrics/route";
 
 export interface SuccessResponse<T> {
   success: true;
@@ -26,6 +27,10 @@ export class ApiResponse {
     statusCode: number = 200,
     meta?: Record<string, unknown>,
   ): NextResponse<SuccessResponse<T>> {
+    try {
+      metricsCollector.recordRequest(statusCode);
+    } catch {}
+
     return NextResponse.json(
       {
         success: true,
@@ -45,6 +50,10 @@ export class ApiResponse {
     errorCode: string = "INTERNAL_SERVER_ERROR",
     details: unknown = null,
   ): NextResponse<ErrorResponse> {
+    try {
+      metricsCollector.recordRequest(statusCode);
+    } catch {}
+
     return NextResponse.json(
       {
         success: false,

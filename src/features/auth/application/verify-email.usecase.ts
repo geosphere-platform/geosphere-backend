@@ -1,4 +1,4 @@
-import { hashPassword } from "@/core/auth/password";
+import { hashToken } from "@/core/auth/password";
 import { BadRequestError, NotFoundError } from "@/core/errors/errors";
 import {
   IUserRepository,
@@ -14,7 +14,7 @@ export class VerifyEmailUseCase {
   ) {}
 
   async execute(token: string): Promise<void> {
-    const tokenHash = await hashPassword(token);
+    const tokenHash = hashToken(token);
     const verification =
       await this.verificationRepository.findEmailVerification(tokenHash);
 

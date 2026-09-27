@@ -3,7 +3,7 @@ import {
   signAccessToken,
   signRefreshToken,
 } from "@/core/auth/jwt";
-import { hashPassword } from "@/core/auth/password";
+import { hashToken } from "@/core/auth/password";
 import { AUTH_CONSTANTS } from "@/core/constants";
 import { UnauthorizedError } from "@/core/errors/errors";
 import {
@@ -36,7 +36,7 @@ export class RefreshTokenUseCase {
       throw new UnauthorizedError("Invalid session");
     }
 
-    const tokenHash = await hashPassword(incomingRefreshToken);
+    const tokenHash = hashToken(incomingRefreshToken);
     const existingToken =
       await this.sessionRepository.findRefreshTokenByHash(tokenHash);
 
@@ -73,7 +73,7 @@ export class RefreshTokenUseCase {
       family: existingToken.family,
     });
 
-    const newRefreshTokenHash = await hashPassword(newRefreshToken);
+    const newRefreshTokenHash = hashToken(newRefreshToken);
     const expiresAt = new Date(
       Date.now() + AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRES_MS,
     );

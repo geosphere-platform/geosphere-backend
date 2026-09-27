@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { verifyPassword, hashPassword } from "@/core/auth/password";
+import { verifyPassword, hashToken } from "@/core/auth/password";
 import { signAccessToken, signRefreshToken } from "@/core/auth/jwt";
 import { AUTH_CONSTANTS } from "@/core/constants";
 import { UnauthorizedError, ForbiddenError } from "@/core/errors/errors";
@@ -31,37 +31,11 @@ export class LoginUseCase {
   ): Promise<LoginResult> {
     const inputIdentifier = dto.email.toLowerCase().trim();
 
-    // Check for test credentials: user id: admin / password: 12345678
-    const isTestAdmin =
-      (inputIdentifier === "admin" ||
-        inputIdentifier === "admin@fleet.com" ||
-        inputIdentifier === "admin@gis.com") &&
-      dto.password === "12345678";
-
     let user: UserEntity | null = null;
-
-    if (isTestAdmin) {
-      user = {
-        id: "admin-super-id-0000-0000-000000000000",
-        email: "admin@fleet.com",
-        passwordHash: "",
-        firstName: "System",
-        lastName: "Administrator",
-        role: "SUPER_ADMIN" as const,
-        organizationId: "00000000-0000-0000-0000-000000000001",
-        emailVerifiedAt: new Date(),
-        isActive: true,
-        failedLoginAttempts: 0,
-        lockedUntil: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-    } else {
-      try {
-        user = await this.userRepository.findByEmail(inputIdentifier);
-      } catch {
-        user = null;
-      }
+    try {
+      user = await this.userRepository.findByEmail(inputIdentifier);
+    } catch {
+      user = null;
     }
 
     if (!user) {
@@ -81,8 +55,7 @@ export class LoginUseCase {
       );
     }
 
-    const isPasswordValid =
-      isTestAdmin || (await verifyPassword(dto.password, user.passwordHash));
+    const isPasswordValid = await verifyPassword(dto.password, user.passwordHash);
     if (!isPasswordValid) {
       try {
         const attempts = await this.userRepository.incrementFailedLogin(
@@ -111,7 +84,7 @@ export class LoginUseCase {
     }
 
     // Reset failed login attempts on successful login
-    if (!isTestAdmin && (user.failedLoginAttempts > 0 || user.lockedUntil)) {
+    if (user.failedLoginAttempts > 0 || user.lockedUntil) {
       try {
         await this.userRepository.resetFailedLogin(user.id);
       } catch {
@@ -132,7 +105,7 @@ export class LoginUseCase {
       family: tokenFamily,
     });
 
-    const refreshTokenHash = await hashPassword(refreshToken);
+    const refreshTokenHash = hashToken(refreshToken);
     const expiresAt = new Date(
       Date.now() + AUTH_CONSTANTS.REFRESH_TOKEN_EXPIRES_MS,
     );

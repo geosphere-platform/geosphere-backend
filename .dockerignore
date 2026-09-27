@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.github
+backups
+test_uploads
+*.log
+.env
+.env.local
+*.tsbuildinfo
+Dockerfile
+.dockerignore
+README.md

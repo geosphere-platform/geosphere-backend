@@ -3,13 +3,22 @@ import { Pool } from "pg";
 import { env } from "@/core/config/env";
 import * as schema from "./schema";
 
-const pool = new Pool({
-  connectionString: env.DATABASE_URL,
-  max: env.DB_MAX_CONNECTIONS ?? (env.NODE_ENV === "production" ? 20 : 5),
-  idleTimeoutMillis: env.DB_IDLE_TIMEOUT_MS ?? 30000,
-  connectionTimeoutMillis: 5000,
-  statement_timeout: env.DB_STATEMENT_TIMEOUT_MS ?? 15000,
-});
+// Global connection pool cache to prevent connection exhaustion during Next.js HMR reloads
+const globalForDb = globalThis as unknown as { dbPool?: Pool };
+
+const pool =
+  globalForDb.dbPool ??
+  new Pool({
+    connectionString: env.DATABASE_URL,
+    max: env.DB_MAX_CONNECTIONS ?? (env.NODE_ENV === "production" ? 20 : 5),
+    idleTimeoutMillis: env.DB_IDLE_TIMEOUT_MS ?? 30000,
+    connectionTimeoutMillis: 5000,
+    statement_timeout: env.DB_STATEMENT_TIMEOUT_MS ?? 15000,
+  });
+
+if (env.NODE_ENV !== "production") {
+  globalForDb.dbPool = pool;
+}
 
 pool.on("error", (err) => {
   console.error("❌ Unexpected PostgreSQL connection pool error:", err);

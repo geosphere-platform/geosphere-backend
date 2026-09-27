@@ -1,6 +1,8 @@
 node_modules/
 .next/
 out/
+dist/
+packages/*/dist/
 .env
 .env.local
 npm-debug.log*
@@ -8,7 +10,6 @@ yarn-debug.log*
 yarn-error.log*
 pino.log
 *.tsbuildinfo
-next-env.d.ts
 .DS_Store
 Thumbs.db
 backups/

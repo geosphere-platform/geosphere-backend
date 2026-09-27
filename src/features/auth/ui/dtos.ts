@@ -8,16 +8,8 @@ export const RegisterDto = z.object({
   firstName: z.string().min(1, "First name is required").max(100),
   lastName: z.string().min(1, "Last name is required").max(100),
   role: z
-    .enum([
-      USER_ROLES.SUPER_ADMIN,
-      USER_ROLES.ORG_ADMIN,
-      USER_ROLES.MANAGER,
-      USER_ROLES.DISPATCHER,
-      USER_ROLES.DRIVER,
-      USER_ROLES.VIEWER,
-    ] as [UserRole, ...UserRole[]])
-    .optional()
-    .default(USER_ROLES.VIEWER),
+    .enum([USER_ROLES.VIEWER] as [UserRole, ...UserRole[]])
+    .optional(),
   organizationId: z.string().uuid().optional().nullable(),
 });
 

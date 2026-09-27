@@ -18,9 +18,22 @@ export class LocalStorageProvider implements ObjectStorageProvider {
     }
   }
 
+  private resolveSafePath(key: string): string {
+    const normalizedKey = path.normalize(key).replace(/^(\.\.[\/\\])+/, "");
+    const safeKey = normalizedKey.replace(/[^a-zA-Z0-9_\-./]/g, "_");
+    const resolvedBase = path.resolve(this.baseDir);
+    const resolvedPath = path.resolve(resolvedBase, safeKey);
+
+    if (!resolvedPath.startsWith(resolvedBase + path.sep) && resolvedPath !== resolvedBase) {
+      throw new Error("Access denied: Invalid file path traversal detected");
+    }
+
+    return resolvedPath;
+  }
+
   async uploadFile(options: UploadFileOptions): Promise<StoredFile> {
-    const sanitizedKey = options.key.replace(/[^a-zA-Z0-9_\-./]/g, "_");
-    const filePath = path.join(this.baseDir, sanitizedKey);
+    const filePath = this.resolveSafePath(options.key);
+    const sanitizedKey = path.relative(path.resolve(this.baseDir), filePath).replace(/\\/g, "/");
     const dir = path.dirname(filePath);
 
     if (!fs.existsSync(dir)) {
@@ -40,8 +53,7 @@ export class LocalStorageProvider implements ObjectStorageProvider {
   }
 
   async getFile(key: string): Promise<Buffer | null> {
-    const sanitizedKey = key.replace(/[^a-zA-Z0-9_\-./]/g, "_");
-    const filePath = path.join(this.baseDir, sanitizedKey);
+    const filePath = this.resolveSafePath(key);
 
     if (!fs.existsSync(filePath)) {
       return null;
@@ -51,8 +63,7 @@ export class LocalStorageProvider implements ObjectStorageProvider {
   }
 
   async deleteFile(key: string): Promise<boolean> {
-    const sanitizedKey = key.replace(/[^a-zA-Z0-9_\-./]/g, "_");
-    const filePath = path.join(this.baseDir, sanitizedKey);
+    const filePath = this.resolveSafePath(key);
 
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
@@ -76,8 +87,11 @@ export class LocalStorageProvider implements ObjectStorageProvider {
   }
 
   async exists(key: string): Promise<boolean> {
-    const sanitizedKey = key.replace(/[^a-zA-Z0-9_\-./]/g, "_");
-    const filePath = path.join(this.baseDir, sanitizedKey);
-    return fs.existsSync(filePath);
+    try {
+      const filePath = this.resolveSafePath(key);
+      return fs.existsSync(filePath);
+    } catch {
+      return false;
+    }
   }
 }

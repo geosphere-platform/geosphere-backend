@@ -19,6 +19,7 @@ import { gpsAdapterRegistry } from "@/core/gis/realtime/adapters";
 import { extractBearerToken } from "@/core/auth/session";
 import { verifyAccessToken } from "@/core/auth/jwt";
 import { UserRole, USER_ROLES } from "@/core/constants";
+import { apiKeyService } from "@/core/developer/api-key.service";
 
 export async function POST(req: NextRequest) {
   try {
@@ -28,7 +29,10 @@ export async function POST(req: NextRequest) {
     let role: UserRole = USER_ROLES.TENANT_ADMIN;
 
     const bearerToken = extractBearerToken(req);
-    const apiKey = req.headers.get("x-api-key") || req.headers.get("x-device-token") || req.nextUrl.searchParams.get("apiKey");
+    const apiKey =
+      req.headers.get("x-api-key") ||
+      req.headers.get("x-device-token") ||
+      req.nextUrl.searchParams.get("apiKey");
 
     if (bearerToken) {
       try {
@@ -37,15 +41,47 @@ export async function POST(req: NextRequest) {
         userId = decoded.sub;
         role = decoded.role;
       } catch {
-        return ApiResponse.error("Invalid or expired authorization token", 401, "UNAUTHORIZED");
+        return ApiResponse.error(
+          "Invalid or expired authorization token",
+          401,
+          "UNAUTHORIZED",
+        );
       }
     } else if (apiKey) {
-      // Validated device token or API Key
-      tenantId = req.headers.get("x-tenant-id") || req.nextUrl.searchParams.get("tenantId") || "default-tenant-0000";
-      userId = `device-${apiKey.slice(0, 8)}`;
-      role = USER_ROLES.TENANT_ADMIN;
+      // Authenticate & Verify API Key
+      if (apiKey.startsWith("gsk_")) {
+        const keyResult = await apiKeyService.verifyApiKey(apiKey);
+        if (!keyResult.isValid || !keyResult.apiKey) {
+          return ApiResponse.error(
+            `Invalid, expired, or revoked API key: ${keyResult.reason ?? "INVALID_CREDENTIAL"}`,
+            401,
+            "UNAUTHORIZED",
+          );
+        }
+        tenantId = keyResult.apiKey.organizationId;
+        userId = keyResult.apiKey.keyId;
+        role = USER_ROLES.TENANT_ADMIN;
+      } else if (process.env.NODE_ENV !== "production") {
+        // Permitted only in local development & automated test suites
+        tenantId =
+          req.headers.get("x-tenant-id") ||
+          req.nextUrl.searchParams.get("tenantId") ||
+          "default-tenant-0000";
+        userId = `device-${apiKey.slice(0, 8)}`;
+        role = USER_ROLES.TENANT_ADMIN;
+      } else {
+        return ApiResponse.error(
+          "Invalid API key format. Production keys must be generated through the Developer Portal.",
+          401,
+          "UNAUTHORIZED",
+        );
+      }
     } else {
-      return ApiResponse.error("Missing authorization: Bearer token or x-api-key required", 401, "UNAUTHORIZED");
+      return ApiResponse.error(
+        "Missing authorization: Bearer token or x-api-key required",
+        401,
+        "UNAUTHORIZED",
+      );
     }
 
     // 2. Extract Raw Payload (Supports JSON or raw text hex string)

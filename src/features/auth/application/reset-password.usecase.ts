@@ -1,4 +1,4 @@
-import { hashPassword } from "@/core/auth/password";
+import { hashPassword, hashToken } from "@/core/auth/password";
 import { BadRequestError, NotFoundError } from "@/core/errors/errors";
 import {
   IUserRepository,
@@ -21,7 +21,7 @@ export class ResetPasswordUseCase {
     ipAddress?: string | null,
     userAgent?: string | null,
   ): Promise<void> {
-    const tokenHash = await hashPassword(dto.token);
+    const tokenHash = hashToken(dto.token);
     const resetRecord =
       await this.verificationRepository.findPasswordReset(tokenHash);
 

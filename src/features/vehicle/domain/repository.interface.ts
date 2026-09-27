@@ -2,7 +2,7 @@ import { Vehicle, TelemetryLog } from "./entities";
 
 export interface IVehicleRepository {
   findById(id: string): Promise<Vehicle | null>;
-  findAll(): Promise<Vehicle[]>;
+  findAll(organizationId?: string): Promise<Vehicle[]>;
   save(vehicle: Vehicle): Promise<Vehicle>;
   delete(id: string): Promise<void>;
 

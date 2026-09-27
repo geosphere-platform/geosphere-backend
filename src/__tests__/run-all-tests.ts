@@ -124,6 +124,7 @@ import { runGeofenceAdminBoundariesUnitTests } from "./unit/geofence.admin-bound
 import { runGeofenceAdminBoundariesUiTests } from "./ui/geofence.admin-boundaries.ui.test";
 import { runBoundaryResolverServiceUnitTests } from "./unit/boundary-resolver.service.unit.test";
 import { runReportsAndAuditUnitTests } from "./unit/reports-audit.unit.test";
+import { runAuthSecurityFlowsUnitTests } from "./unit/auth.security-flows.unit.test";
 
 export async function runAllPlatformTests() {
   console.log("==========================================");
@@ -669,6 +670,12 @@ export async function runAllPlatformTests() {
       "84. Running Operational Reports & Audit Ledger Unit Tests... ",
     );
     runReportsAndAuditUnitTests();
+    console.log("✅ PASSED");
+
+    process.stdout.write(
+      "85. Running Hardened Authentication & Deterministic Token Security Tests... ",
+    );
+    await runAuthSecurityFlowsUnitTests();
     console.log("✅ PASSED");
 
     console.log("==========================================");

@@ -1,21 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDbPoolStats } from "@/database";
 
-// In-memory operational metrics collector
+// In-memory operational metrics collector with Prometheus export support
 class MetricsCollector {
   private requestCount = 0;
   private errorCount = 0;
   private latencies: number[] = [];
   private spatialQueryLatencies: number[] = [];
 
-  recordRequest(status: number, durationMs: number) {
+  recordRequest(status: number, durationMs: number = 0) {
     this.requestCount += 1;
     if (status >= 400) {
       this.errorCount += 1;
     }
-    this.latencies.push(durationMs);
-    if (this.latencies.length > 1000) {
-      this.latencies.shift();
+    if (durationMs > 0) {
+      this.latencies.push(durationMs);
+      if (this.latencies.length > 1000) {
+        this.latencies.shift();
+      }
     }
   }
 
@@ -73,10 +75,59 @@ class MetricsCollector {
       },
     };
   }
+
+  toPrometheus(): string {
+    const m = this.getMetrics();
+    const p = m.databasePool;
+    return [
+      "# HELP geosphere_uptime_seconds Total runtime of the API server process in seconds",
+      "# TYPE geosphere_uptime_seconds gauge",
+      `geosphere_uptime_seconds ${m.uptimeSeconds}`,
+      "",
+      "# HELP geosphere_http_requests_total Total number of HTTP requests processed",
+      "# TYPE geosphere_http_requests_total counter",
+      `geosphere_http_requests_total ${m.requests.total}`,
+      "",
+      "# HELP geosphere_http_errors_total Total number of HTTP requests resulting in 4xx/5xx status",
+      "# TYPE geosphere_http_errors_total counter",
+      `geosphere_http_errors_total ${m.requests.errors}`,
+      "",
+      "# HELP geosphere_http_latency_p95_ms 95th percentile HTTP request duration in milliseconds",
+      "# TYPE geosphere_http_latency_p95_ms gauge",
+      `geosphere_http_latency_p95_ms ${m.requests.latencyMs.p95}`,
+      "",
+      "# HELP geosphere_db_pool_total Total database pool connections",
+      "# TYPE geosphere_db_pool_total gauge",
+      `geosphere_db_pool_total ${p.totalCount ?? 0}`,
+      "",
+      "# HELP geosphere_db_pool_idle Idle database pool connections",
+      "# TYPE geosphere_db_pool_idle gauge",
+      `geosphere_db_pool_idle ${p.idleCount ?? 0}`,
+      "",
+      "# HELP geosphere_db_pool_waiting Queries waiting for a free database connection",
+      "# TYPE geosphere_db_pool_waiting gauge",
+      `geosphere_db_pool_waiting ${p.waitingCount ?? 0}`,
+      "",
+      "# HELP geosphere_memory_heap_used_bytes Node.js heap memory used in bytes",
+      "# TYPE geosphere_memory_heap_used_bytes gauge",
+      `geosphere_memory_heap_used_bytes ${process.memoryUsage().heapUsed}`,
+    ].join("\n");
+  }
 }
 
 export const metricsCollector = new MetricsCollector();
 
 export async function GET(request: NextRequest) {
+  const format = request.nextUrl.searchParams.get("format");
+  const accept = request.headers.get("accept") || "";
+
+  if (format === "prometheus" || accept.includes("text/plain")) {
+    return new NextResponse(metricsCollector.toPrometheus(), {
+      headers: {
+        "Content-Type": "text/plain; version=0.0.4; charset=utf-8",
+      },
+    });
+  }
+
   return NextResponse.json(metricsCollector.getMetrics());
 }

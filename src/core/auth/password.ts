@@ -8,7 +8,7 @@
  */
 
 import bcrypt from "bcryptjs";
-import { randomBytes } from "crypto";
+import { randomBytes, createHash } from "crypto";
 import { z } from "zod";
 import { AUTH_CONSTANTS } from "../constants";
 
@@ -63,4 +63,13 @@ export function validatePasswordStrength(password: string): string {
  */
 export function generateSecureToken(): string {
   return randomBytes(32).toString("hex");
+}
+
+/**
+ * Deterministically hash high-entropy tokens (email verify, password reset, refresh tokens)
+ * using SHA-256 for O(1) secure equality lookups.
+ * (Bcrypt is non-deterministic due to random salting and cannot be queried via WHERE clause).
+ */
+export function hashToken(token: string): string {
+  return createHash("sha256").update(token.trim()).digest("hex");
 }

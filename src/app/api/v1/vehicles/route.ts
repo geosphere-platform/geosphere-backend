@@ -19,16 +19,9 @@ export const GET = withAuth(async (ctx: AuthContext) => {
 
   const repository = new DrizzleVehicleRepository(db);
   const useCase = new GetVehiclesUseCase(repository);
-  const vehicles = await useCase.execute();
+  const vehicles = await useCase.execute(ctx.user.orgId ?? undefined);
 
-  // Filter by tenant organization boundary if orgId is set
-  const filtered = ctx.user.orgId
-    ? vehicles.filter(
-        (v) => !v.organizationId || v.organizationId === ctx.user.orgId,
-      )
-    : vehicles;
-
-  return ApiResponse.success(filtered);
+  return ApiResponse.success(vehicles);
 });
 
 /**

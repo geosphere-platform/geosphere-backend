@@ -20,6 +20,7 @@ const envSchema = z.object({
     .string()
     .min(16)
     .default("default-dev-jwt-secret-min-16-chars-long"),
+  JWT_REFRESH_SECRET: z.string().optional(),
   JWT_EXPIRES_IN: z.string().default("7d"),
   CORS_ALLOWED_ORIGINS: z.string().default("*"),
 
@@ -60,8 +61,10 @@ function getParsedEnv() {
     DB_IDLE_TIMEOUT_MS: process.env.DB_IDLE_TIMEOUT_MS,
     DB_STATEMENT_TIMEOUT_MS: process.env.DB_STATEMENT_TIMEOUT_MS,
     JWT_SECRET: process.env.JWT_SECRET,
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
     JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
-    CORS_ALLOWED_ORIGINS: process.env.CORS_ALLOWED_ORIGINS,
+    CORS_ALLOWED_ORIGINS:
+      process.env.CORS_ALLOWED_ORIGINS || process.env.CORS_ORIGIN,
     STORAGE_PROVIDER: process.env.STORAGE_PROVIDER,
     STORAGE_LOCAL_DIR: process.env.STORAGE_LOCAL_DIR,
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
@@ -80,6 +83,18 @@ function getParsedEnv() {
   if (!parsed.success) {
     console.error("❌ Invalid environment variables:", parsed.error.format());
     throw new Error("Invalid environment configuration. Check your .env file.");
+  }
+
+  // OWASP Production Security Gate: Fail-fast if default development secret is used in production
+  if (parsed.data.NODE_ENV === "production") {
+    if (
+      !process.env.JWT_SECRET ||
+      process.env.JWT_SECRET === "default-dev-jwt-secret-min-16-chars-long"
+    ) {
+      throw new Error(
+        "CRITICAL SECURITY CONFIGURATION ERROR: JWT_SECRET must be set to a secure, unique secret in production environments.",
+      );
+    }
   }
 
   return parsed.data;

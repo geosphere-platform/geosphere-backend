@@ -1,4 +1,4 @@
-import { generateSecureToken, hashPassword } from "@/core/auth/password";
+import { generateSecureToken, hashToken } from "@/core/auth/password";
 import { AUTH_CONSTANTS } from "@/core/constants";
 import {
   IUserRepository,
@@ -26,7 +26,7 @@ export class ForgotPasswordUseCase {
     }
 
     const resetToken = generateSecureToken();
-    const tokenHash = await hashPassword(resetToken);
+    const tokenHash = hashToken(resetToken);
     const expiresAt = new Date(
       Date.now() + AUTH_CONSTANTS.PASSWORD_RESET_TOKEN_EXPIRES_MS,
     );

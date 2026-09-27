@@ -1,6 +1,6 @@
 import { ApiResponse } from "@/core/http/api-response";
 import { withAuth, AuthContext } from "@/core/auth/guards";
-import { PERMISSIONS } from "@/core/constants";
+import { PERMISSIONS, USER_ROLES } from "@/core/constants";
 import { hasPermission } from "@/core/auth/permissions";
 import { ForbiddenError, NotFoundError } from "@/core/errors/errors";
 import { db } from "@/database";
@@ -11,6 +11,23 @@ import { DeleteVehicleUseCase } from "@/features/vehicle/application/delete-vehi
 
 interface Context {
   params: Promise<{ id: string }>;
+}
+
+function enforceTenantBoundary(
+  userRole: string,
+  userOrgId: string | null | undefined,
+  vehicleOrgId: string | null | undefined,
+) {
+  const isSuper =
+    userRole === USER_ROLES.SUPER_ADMIN ||
+    userRole === USER_ROLES.PLATFORM_ADMIN;
+  if (isSuper) return;
+
+  if (!vehicleOrgId || vehicleOrgId !== userOrgId) {
+    throw new ForbiddenError(
+      "You are not authorized to access vehicles from another organization",
+    );
+  }
 }
 
 /**
@@ -34,15 +51,7 @@ export const GET = withAuth(
     }
 
     // Enforce tenant boundary: non-super-admins cannot view vehicles belonging to another organization
-    if (
-      ctx.user.orgId &&
-      vehicle.organizationId &&
-      vehicle.organizationId !== ctx.user.orgId
-    ) {
-      throw new ForbiddenError(
-        "You are not authorized to view vehicles from another organization",
-      );
-    }
+    enforceTenantBoundary(ctx.user.role, ctx.user.orgId, vehicle.organizationId);
 
     return ApiResponse.success(vehicle);
   },
@@ -66,15 +75,7 @@ export const PUT = withAuth(
     if (!existing) {
       throw new NotFoundError("Vehicle not found");
     }
-    if (
-      ctx.user.orgId &&
-      existing.organizationId &&
-      existing.organizationId !== ctx.user.orgId
-    ) {
-      throw new ForbiddenError(
-        "You are not authorized to update vehicles from another organization",
-      );
-    }
+    enforceTenantBoundary(ctx.user.role, ctx.user.orgId, existing.organizationId);
 
     const useCase = new UpdateVehicleUseCase(repository);
     const updated = await useCase.execute(id, body);
@@ -100,15 +101,7 @@ export const DELETE = withAuth(
     if (!existing) {
       throw new NotFoundError("Vehicle not found");
     }
-    if (
-      ctx.user.orgId &&
-      existing.organizationId &&
-      existing.organizationId !== ctx.user.orgId
-    ) {
-      throw new ForbiddenError(
-        "You are not authorized to delete vehicles from another organization",
-      );
-    }
+    enforceTenantBoundary(ctx.user.role, ctx.user.orgId, existing.organizationId);
 
     const useCase = new DeleteVehicleUseCase(repository);
     await useCase.execute(id);

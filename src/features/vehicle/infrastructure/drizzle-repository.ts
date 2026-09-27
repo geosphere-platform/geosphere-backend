@@ -32,8 +32,13 @@ export class DrizzleVehicleRepository implements IVehicleRepository {
     };
   }
 
-  async findAll(): Promise<Vehicle[]> {
-    const rows = await this.db.select().from(vehiclesTable);
+  async findAll(organizationId?: string): Promise<Vehicle[]> {
+    const rows = organizationId
+      ? await this.db
+          .select()
+          .from(vehiclesTable)
+          .where(eq(vehiclesTable.organizationId, organizationId))
+      : await this.db.select().from(vehiclesTable);
 
     return rows.map((row) => ({
       id: row.id,
