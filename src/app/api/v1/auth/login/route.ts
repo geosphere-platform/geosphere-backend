@@ -25,6 +25,16 @@ export async function POST(req: NextRequest) {
       req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip");
     const userAgent = req.headers.get("user-agent");
 
+    if (!validated.device && req.headers.get("x-device-id")) {
+      validated.device = {
+        deviceId: req.headers.get("x-device-id") ?? undefined,
+        deviceName: req.headers.get("x-device-name") ?? undefined,
+        platform: req.headers.get("x-device-platform") ?? undefined,
+        osVersion: req.headers.get("x-device-os") ?? undefined,
+        model: req.headers.get("x-device-model") ?? undefined,
+      };
+    }
+
     const result = await useCase.execute(validated, ipAddress, userAgent);
 
     const response = ApiResponse.success(

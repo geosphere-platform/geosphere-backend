@@ -128,7 +128,10 @@ export class LoginUseCase {
         entityId: user.id,
         ipAddress: ipAddress ?? null,
         userAgent: userAgent ?? null,
-        metadata: { role: user.role },
+        metadata: {
+          role: user.role,
+          device: dto.device ?? null,
+        },
       });
     } catch {
       // Ignored for fallback test session when database is offline

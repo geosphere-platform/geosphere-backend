@@ -15,9 +15,28 @@ export const RegisterDto = z.object({
 
 export type RegisterDtoType = z.infer<typeof RegisterDto>;
 
+export const DeviceDetailsDto = z
+  .object({
+    deviceId: z.string().optional(),
+    deviceName: z.string().optional(),
+    model: z.string().optional(),
+    manufacturer: z.string().optional(),
+    platform: z.string().optional(),
+    osVersion: z.string().optional(),
+    appVersion: z.string().optional(),
+    batteryLevel: z.number().optional(),
+    isCharging: z.boolean().optional(),
+    networkType: z.string().optional(),
+    timezone: z.string().optional(),
+  })
+  .optional();
+
+export type DeviceDetailsDtoType = z.infer<typeof DeviceDetailsDto>;
+
 export const LoginDto = z.object({
   email: z.string().min(1, "User ID or Email address is required"),
   password: z.string().min(1, "Password is required"),
+  device: DeviceDetailsDto,
 });
 
 export type LoginDtoType = z.infer<typeof LoginDto>;
