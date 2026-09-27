@@ -279,6 +279,19 @@ export async function runAuthSecurityFlowsUnitTests(): Promise<boolean> {
   }
   assert.strictEqual(loggedOutReuse, true, "Logged out refresh token must be rejected upon reuse");
 
+  // 9. Test Immediate Re-Login After Logout
+  const postLogoutLogin = await loginUseCase.execute({
+    email: "operator@enterprise.com",
+    password: "NewPassword123!@#Secure",
+  });
+  assert.ok(postLogoutLogin.accessToken, "Immediate re-login after logout must succeed");
+  assert.ok(postLogoutLogin.refreshToken, "New refresh token issued for fresh session");
+  assert.notStrictEqual(postLogoutLogin.refreshToken, reLogin.refreshToken, "New session must have fresh token");
+
+  // Verify the new session works for token rotation
+  const freshRotated = await refreshTokenUseCase.execute(postLogoutLogin.refreshToken);
+  assert.ok(freshRotated.accessToken, "Fresh session tokens can be refreshed normally");
+
   return true;
 }
 
