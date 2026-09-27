@@ -1,5 +1,5 @@
 import { verifyRefreshToken } from "@/core/auth/jwt";
-import { hashPassword } from "@/core/auth/password";
+import { hashToken } from "@/core/auth/password";
 import {
   ISessionRepository,
   IAuditLogRepository,
@@ -20,7 +20,7 @@ export class LogoutUseCase {
 
     try {
       const payload = await verifyRefreshToken(refreshToken);
-      const tokenHash = await hashPassword(refreshToken);
+      const tokenHash = hashToken(refreshToken);
       const session =
         await this.sessionRepository.findRefreshTokenByHash(tokenHash);
 

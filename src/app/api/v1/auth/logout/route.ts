@@ -11,7 +11,19 @@ import { LogoutUseCase } from "@/features/auth/application/logout.usecase";
 
 export async function POST(req: NextRequest) {
   try {
-    const refreshToken = getRefreshTokenFromCookie(req);
+    let refreshToken = getRefreshTokenFromCookie(req);
+
+    if (!refreshToken) {
+      try {
+        const body = await req.json();
+        if (body?.refreshToken && typeof body.refreshToken === "string") {
+          refreshToken = body.refreshToken;
+        }
+      } catch {
+        // No json body
+      }
+    }
+
     const sessionRepo = new DrizzleSessionRepository(db);
     const auditRepo = new DrizzleAuditLogRepository(db);
 

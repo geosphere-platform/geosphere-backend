@@ -3,6 +3,7 @@ import { ApiResponse } from "@/core/http/api-response";
 import {
   getRefreshTokenFromCookie,
   setRefreshTokenCookie,
+  setAccessTokenCookie,
 } from "@/core/auth/session";
 import { UnauthorizedError } from "@/core/errors/errors";
 import { db } from "@/database";
@@ -13,9 +14,22 @@ import { RefreshTokenUseCase } from "@/features/auth/application/refresh-token.u
 
 export async function POST(req: NextRequest) {
   try {
-    const refreshToken = getRefreshTokenFromCookie(req);
+    let refreshToken = getRefreshTokenFromCookie(req);
+
+    // Fallback: check JSON body for mobile/API clients
     if (!refreshToken) {
-      throw new UnauthorizedError("Missing refresh token cookie");
+      try {
+        const body = await req.json();
+        if (body?.refreshToken && typeof body.refreshToken === "string") {
+          refreshToken = body.refreshToken;
+        }
+      } catch {
+        // No json body
+      }
+    }
+
+    if (!refreshToken) {
+      throw new UnauthorizedError("Missing refresh token");
     }
 
     const userRepo = new DrizzleUserRepository(db);
@@ -32,12 +46,14 @@ export async function POST(req: NextRequest) {
     const response = ApiResponse.success(
       {
         accessToken: result.accessToken,
+        refreshToken: result.refreshToken,
       },
       200,
     );
 
-    // Rotate refresh token cookie
+    // Rotate refresh token cookie & access token cookie
     setRefreshTokenCookie(response, result.refreshToken);
+    setAccessTokenCookie(response, result.accessToken);
 
     return response;
   } catch (err) {

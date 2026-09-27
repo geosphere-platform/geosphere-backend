@@ -20,6 +20,7 @@ import { RegisterUseCase } from "@/features/auth/application/register.usecase";
 import { VerifyEmailUseCase } from "@/features/auth/application/verify-email.usecase";
 import { ResetPasswordUseCase } from "@/features/auth/application/reset-password.usecase";
 import { RefreshTokenUseCase } from "@/features/auth/application/refresh-token.usecase";
+import { LogoutUseCase } from "@/features/auth/application/logout.usecase";
 
 class MockUserRepository implements IUserRepository {
   public users = new Map<string, UserEntity>();
@@ -261,7 +262,22 @@ export async function runAuthSecurityFlowsUnitTests(): Promise<boolean> {
     email: "operator@enterprise.com",
     password: "NewPassword123!@#Secure",
   });
-  assert.ok(reLogin.accessToken, "Login successful with newly reset password");
+  // 8. Test Logout and Session Revocation
+  const logoutUseCase = new LogoutUseCase(sessionRepo, auditRepo);
+  await logoutUseCase.execute(reLogin.refreshToken);
+
+  // Verify that the logged-out refresh token is revoked in database and cannot be used
+  let loggedOutReuse = false;
+  try {
+    await refreshTokenUseCase.execute(reLogin.refreshToken);
+  } catch (err: any) {
+    if (err instanceof UnauthorizedError || err.statusCode === 401 || err.errorCode === "UNAUTHORIZED") {
+      loggedOutReuse = true;
+    } else {
+      throw err;
+    }
+  }
+  assert.strictEqual(loggedOutReuse, true, "Logged out refresh token must be rejected upon reuse");
 
   return true;
 }
